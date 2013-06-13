@@ -1,0 +1,123 @@
+* About McRaw (mik-raw)
+McRaw provides an extensible way to calculate the raw material
+requirements of any item you define.  McRaw is designed to be an
+all-in-one command-line-interface (CLI) solution for understanding how
+much raw material you would invest for a particular item (and how to
+craft things as cheaply as possible).
+
+McRaw does not and /w$ill not/ take into account the cost of smelting
+or other transforming BUT THIS COULD BE DONE IF
+
+Need to think about adding a 'needed items' to recipes
+#+BEGIN_SRC sh
+  mcraw database custom addrecipe 12345:1 241:3 4345:3 --need 123:1 1234:2
+#+END_SRC
+
+
+* Using McRaw
+** Setting Up
+There is a fair amount of setup involved in McRaw.  Since there is no
+good way to extract item recipes from the Minecraft binaries
+themselves, a database of these recipes must be separately maintained.
+
+I hope to have a collection of pre-made databases provided in this
+repository at some point, but obviously the tool to create them must
+first exist.
+
+*** Creating a Database
+McRaw uses a CLI interface to create and maintain databases of item
+recipes.  Creating a database called ~custom~ will work like this:
+#+BEGIN_SRC sh
+  mcraw database create custom --file 
+#+END_SRC
+(Note that ~create~ is reserved and is not a valid database name.  If
+anyone knows a way around this, please advise.)  No spaces in database
+names.  This creates a file called ~custom.mcrdb~ in your HOME
+directory (does this exist by default on Windows systems?) and is
+simply a saved state of an internal list of recipes.
+
+*** Adding Items
+You can add items to a database by
+#+BEGIN_SRC sh
+  mcraw database custom additem ITEM_ID "NAME"
+#+END_SRC
+which opens ~custom.mcrdb~, adds the item ~ITEM_ID~ to it with the
+name ~NAME~, saves it, and exits.  It is an error to add an existing
+recipe.
+
+*** Renaming Items
+If you wish to rename an item,
+#+BEGIN_SRC sh
+  mcraw database custom rename ITEM_ID "NEW NAME"
+#+END_SRC
+which renames the item in the database file.
+
+*** Adding Recipes
+#+BEGIN_SRC sh
+  mcraw database custom addrecipe ITEM_ID ITEM1_ID ITEM1_COUNT ...
+#+END_SRC
+Appends the given recipe for ~ITEM_ID~ to the database and saves it.
+
+** Breaking Down
+Now comes the fun part.
+
+The following all assumes you've set your default database for use
+with McRaw.  You can do this one of two ways:
+
+1. Edit =~/.mcraw= to include the following line:
+   #+BEGIN_SRC conf
+     defaultdb=custom
+   #+END_SRC
+*** Getting Potential Costs
+Many times, especially with modpacks, there is more than one way to
+create an item.  This leads to an exponential growth in exactly how
+many ways an item can be crafted, depending on how complex the item
+and its dependencies are.  Thus, if there is more than one way to skin
+the cat, the following commands will simply output a sorted list of
+all possible ways to craft the item.
+
+#+BEGIN_SRC sh
+  mcraw reduce 12345:1
+#+END_SRC
+produces such a list:
+#+BEGIN_EXAMPLE
+  There are multiple ways to craft this.  Here's a list:
+  
+  1: (6 items total)
+  4 Iron Ingot
+  2 Gold Ingot
+  
+  2: (7 items total)
+  3 Iron Ingot
+  3 Gold Ingot
+  1 Dirt
+#+END_EXAMPLE
+
+Since McRaw needs to be completely unambiguous and items in Minecraft
+are often /very/ ambiguous, there is modest database search
+functionality embedded within McRaw.
+
+#+BEGIN_SRC sh
+  mcraw
+#+END_SRC
+
+*** Getting Crafty
+Okay, so McRaw can give you a list of everything you need to lay your
+hands on to craft your favorite item.
+* Credits
+** Source
+- Sean Allred
+** Databases
+(Once the source code has matured, ready-to-use databases should be
+added here so that end users can, well, /use/ them without having to
+first set them up.  I'd like the yet-to-be-created folder =databases/=
+to contain a list of modpacks, presumeably ones that actually add
+items, further organized by version.  The software will provide a
+means of creating a union of modpacks
+
+* Wishlist
+- Ability to define /classes/ of items so that recipes (and the
+  interface) can be made more robust.  For example, to get 4 Sticks,
+  you only need to have two blocks of wood plank; /it doesn't matter
+  what type of wood you use, so long as it's wood/.
+- Ability to define recipe shapes (and signal shapeless recipes)
