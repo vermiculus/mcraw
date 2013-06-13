@@ -5,6 +5,17 @@ database_path = "./items_db.pkl"
 # used in recipe concatenation.
 add_dict=lambda a,b:{i:a.get(i,0)+b.get(i,0) for i in set(a)|set(b)}
 
+# My best idea ever!
+output_streams = {
+    "status": True,
+    "debug": True,
+    "comment": False}
+
+def message(stream, msg, *a):
+    if stream not in output_streams:
+        raise Error("I can't find the '{}' stream.".format(stream))
+    print("{}: {}".format(stream, msg.format(*a)))
+
 class Item:
     """
     Any item in Minecraft.
@@ -30,6 +41,8 @@ class Item:
             recipes -- a collection of recipes that can create this
                        item (default list())
         """
+        message("debug", "Creating item (id={}, natural={}, recipes={})",\
+                    str(id), bool(natural), bool(recipes))
         if not natural and len(recipes) is 0: # I prefer not to use
                                               # 'not recipes' because
                                               # I want to ensure
@@ -40,7 +53,7 @@ class Item:
                     str(name)))
         self.id = id
         self.natural = natural
-        self.dependencies = dependencies
+        self.recipes = recipes
     
     def reduce(self):
         """
@@ -58,7 +71,7 @@ class Item:
         # else
         for recipe in self.recipes:
             for item in recipe:
-                pass # MIND BENDY RECURSION
+                itemrecipes = item.reduce()
 
 class Recipe:
     """
