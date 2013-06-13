@@ -11,10 +11,14 @@ output_streams = {
     "debug": True,
     "comment": False}
 
-def message(stream, msg, *a):
+def message(stream, msg, *args):
+    """
+    If stream is defined and enabled in output_streams, then print to
+    stdout the stream and the message formatted with its arguments.
+    """
     if stream not in output_streams:
         raise Error("I can't find the '{}' stream.".format(stream))
-    print("{}: {}".format(stream, msg.format(*a)))
+    print("{}: {}".format(stream, msg.format(*args)))
 
 class Item:
     """
