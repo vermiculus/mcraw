@@ -28,13 +28,15 @@ first exist.
 McRaw uses a CLI interface to create and maintain databases of item
 recipes.  Creating a database called ~custom~ will work like this:
 #+BEGIN_SRC sh
-  mcraw database create custom --file 
+  mcraw database create custom --file "/path/to/custom.mcrdb" 
 #+END_SRC
 (Note that ~create~ is reserved and is not a valid database name.  If
 anyone knows a way around this, please advise.)  No spaces in database
-names.  This creates a file called ~custom.mcrdb~ in your HOME
-directory (does this exist by default on Windows systems?) and is
-simply a saved state of an internal list of recipes.
+names.  With the =--file= option, you specify where you want the
+database to be saved.  If this is not provided, McRaw creates a file
+called ~custom.mcrdb~ in your HOME directory (does this exist by
+default on Windows systems?  (Answer: no)) and is simply a saved state
+of an internal list of recipes.
 
 *** Adding Items
 You can add items to a database by
@@ -121,3 +123,8 @@ means of creating a union of modpacks
   you only need to have two blocks of wood plank; /it doesn't matter
   what type of wood you use, so long as it's wood/.
 - Ability to define recipe shapes (and signal shapeless recipes)
+* Mcraw --file store name in config under heading databases
+[2013-06-13 Thu 12:22 a.m.]
+If file name not found ask for old filename and cp old to existing upon confirm
+
+Maybe java not everyone has python
