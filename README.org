@@ -15,24 +15,32 @@ I hope to have a collection of pre-made databases provided in this
 repository at some point, but obviously the tool to create them must
 first exist.
 
+*** Installing
+Installing McRaw is a piece of cake.
+#+BEGIN_SRC sh
+  python mcraw.py install
+#+END_SRC
+
+This does several things:
+1. Makes McRaw an executable (so that it can be run as =mcraw args=)
+2. Makes an environment variable ~MCRAWDIR~ that points to 
+
 *** Creating a Database
 McRaw uses a CLI interface to create and maintain databases of item
 recipes.  Creating a database called ~custom~ will work like this:
 #+BEGIN_SRC sh
-  mcraw database create custom --file "/path/to/custom.mcrdb" 
+  mcraw setup createdb custom --file "/path/to/custom.mcrdb" 
 #+END_SRC
-(Note that ~create~ is reserved and is not a valid database name.  If
-anyone knows a way around this, please advise.)  No spaces in database
-names.  With the =--file= option, you specify where you want the
-database to be saved.  If this is not provided, McRaw creates a file
-called ~custom.mcrdb~ in your HOME directory (does this exist by
-default on Windows systems?  (Answer: no)) and is simply a saved state
-of an internal list of recipes.
+No spaces in database names.  With the =--file= option, you specify
+where you want the database to be saved.  If this is not provided,
+McRaw creates a file called ~custom.mcrdb~ in your HOME directory
+(does this exist by default on Windows systems?  (Answer: no)) and is
+simply a saved state of an internal list of recipes.
 
 *** Adding Items
 You can add items to a database by
 #+BEGIN_SRC sh
-  mcraw database custom additem ITEM_ID "NAME"
+  mcraw additem ITEM_ID "NAME"
 #+END_SRC
 which opens ~custom.mcrdb~, adds the item ~ITEM_ID~ to it with the
 name ~NAME~, saves it, and exits.  It is an error to add an existing
@@ -41,13 +49,13 @@ recipe.
 *** Renaming Items
 If you wish to rename an item,
 #+BEGIN_SRC sh
-  mcraw database custom rename ITEM_ID "NEW NAME"
+  mcraw rename ITEM_ID "NEW NAME"
 #+END_SRC
 which renames the item in the database file.
 
 *** Adding Recipes
 #+BEGIN_SRC sh
-  mcraw database custom addrecipe NEWITEM_COUNT NEWITEM_ID ITEM1_COUNT ITEM1_ID ...
+  mcraw addrecipe NEWITEM_COUNT NEWITEM_ID ITEM1_COUNT ITEM1_ID ...
 #+END_SRC
 Appends the given recipe for ~ITEM_ID~ to the database and saves it.
 
@@ -55,7 +63,7 @@ The optional argument =--needs= signals the start of needed, static
 utilities to complete the /immediate/ task; that is, the following
 recipe would be valid:
 #+BEGIN_SRC sh
-  mcraw database custom addrecipe 8 CHARCOAL 8 WOOD 1 CHARCOAL --needs FURNACE
+  mcraw addrecipe 8 CHARCOAL 8 WOOD 1 CHARCOAL --needs FURNACE
 #+END_SRC
 When this recipe is used in an item resolution, it will be noted that
 a ~FURNACE~ is needed.  Note that if additional recipes in the chain
@@ -74,7 +82,7 @@ with McRaw.  You can do this one of two ways:
 
 1. Tell McRaw you'd like to use a specific database by default.
    #+BEGIN_SRC sh
-     mcraw set database custom
+     mcraw setup database custom
    #+END_SRC
    which simply performs the next option:
 2. Edit =$MCRAWDIR/.mcraw= to include the following lines:
@@ -113,7 +121,7 @@ are often /very/ ambiguous, there is modest database search
 functionality embedded within McRaw.
 
 #+BEGIN_SRC sh
-  mcraw database search wood
+  mcraw info wood
 #+END_SRC
 #+BEGIN_EXAMPLE
   123:1 Spruce Wood
@@ -121,9 +129,118 @@ functionality embedded within McRaw.
   123:3 Birch Wood
 #+END_EXAMPLE
 
+If the argument produces a single result:
+#+BEGIN_SRC sh
+  mcraw info "spruce wood"
+#+END_SRC
+#+BEGIN_EXAMPLE
+  Spruce Wood
+    ITEM_ID   123:1
+    There are no recipes that craft Spruce Wood.
+    Spruce Wood is used in 43 recipes.
+    You don't need anything to get Spruce Wood.
+#+END_EXAMPLE
+which provides:
+1. The item id -- used throughout the rest of McRaw
+2. Recipes that craft this item
+3. Recipes that this item crafts
+4. /Any/ utility dependencies -- this includes those in the recipes to
+   create it.
+
 *** Getting Crafty
 Okay, so McRaw can give you a list of everything you need to lay your
 hands on to craft your favorite item.
+
+* Problems?
+McRaw comes with one final feature: self-validation.  This is also
+used in automatic build testing, so release builds are guaranteed to
+pass on all supported platforms.  If it does not pass, re-download and
+double-check your checksums.
+
+#+BEGIN_SRC sh
+  mcraw setup validate
+#+END_SRC
+* Boring Command Tree =mcraw=
+** Setup Tasks =setup=
+Performs uncommon menial setup tasks.
+*** Create Databases =createdb NAME=
+Takes one argument -- the name of a new database.  The database is
+added to the McRaw configuration file.
+
+- --file :: takes one argument as a relative or absolute path to the
+            file.  If this file already exists, the file is not
+            overwritten but first validated and then added to McRaw.
+
+*** Set Default Database =database NAME=
+Takes one argument and sets the default database.  This database must
+exist in McRaw's configuration file.
+
+*** Validate Installation =validate=
+Takes no arguments.  Automated installation validation.
+
+** Searching Databases =info ID=
+Takes exactly one argument.  Quotes are not implied, but will group
+words into one argument.  If search result is unambiguous, =info= will
+output all the information available in the database.  Otherwise, a
+list of matching item names and IDs is output.
+
+** Reducing Items =reduce ID=
+Reduces an item.  This is the main function of McRaw.  output all
+possible raw material and utility requirements.  First performs a
+search similar to =info=; if the result is unambiguous,
+
+Otherwise, output a list (just as =info= would) of possible disambiguations.
+
+** Add Item to Database =additem ID=
+First performs a search similar to =info=; if the result is
+unambiguous, adds the single argument as an item ID to the database.  
+Otherwise, output a list (just as =info= would) of possible
+disambiguations.
+
+It is an error to re-add an existing item ID.
+
+- --database :: specify database to edit
+- --name :: specifies a name for the item.  This is not the record
+            key, so it need not be unique.
+
+** Rename Item in Database =renameitem ID NAME=
+First performs a search similar to =info=; if the result is
+unambiguous, rename the specified item ID with the name given.
+Otherwise, output a list (just as =info= would) of possible
+disambiguations.
+
+It is an error to rename a non-existent item ID.
+
+- --database :: specify database to edit
+
+** Delete Item from Database =delitem ID=
+First performs a search similar to =info=; if the result is unambiguous,
+delete the specified item ID.
+Otherwise, output a list (just as =info= would) of possible disambiguations.
+
+It is an error to delete a non-existent item ID.
+
+- --database :: specify database to edit
+
+** Add Recipe to Database =addrecipe CT ID CT-1 ID-1 CT-2 ID-2 ..=
+First performs a search similar to =info=; if the result is
+unambiguous, add the recipe for ~ID~ (with mandatory count ~CT~;
+e.g. 4 Sticks needs 1 Wood) with the following ~CT~ -- ~ID~ pairs
+declaring the recipe requirements.  Otherwise, output a list (just as
+=info= would) of possible disambiguations.
+
+- --database :: specify database to edit
+- --needs :: takes one argument, an item ID, that is required for this
+             crafting step
+
+** Delete Recipe from Database =delrecipe=
+First performs a search similar to =info=; if the result is
+unambiguous, output a list of recipes for the item ID.  Otherwise,
+output a list (just as =info= would) of possible disambiguations.
+
+Per the menu, this command cannot be run without interaction.
+
+- --database :: specify database to edit
 
 * Credits
 ** Source
