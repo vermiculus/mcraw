@@ -182,9 +182,9 @@ Performs uncommon menial setup tasks.
 Takes one argument -- the name of a new database.  The database is
 added to the McRaw configuration file.
 
-- --file :: takes one argument as a relative or absolute path to the
-            file.  If this file already exists, the file is not
-            overwritten but first validated and then added to McRaw.
+- =--file= :: takes one argument as a relative or absolute path to the
+              file.  If this file already exists, the file is not
+              overwritten but first validated and then added to McRaw.
 
 **** Set Default Database =database NAME=
 Takes one argument and sets the default database.  This database must
@@ -209,7 +209,7 @@ Otherwise, output a list (just as =info= would) of possible disambiguations.
 *** Item Alterations =item=
 Functions related to modifying items.
 
-- --database :: specify database to edit
+- =--database= :: specify database to edit
 
 **** Add to Database =add ID=
 First performs a search similar to =info=; if the result is
@@ -219,9 +219,9 @@ disambiguations.
 
 It is an error to re-add an existing item ID.
 
-- --database :: specify database to edit
-- --name :: specifies a name for the item.  This is not the record
-            key, so it need not be unique.
+- =--database= :: specify database to edit
+- =--name= :: specifies a name for the item.  This is not the record
+              key, so it need not be unique.
 
 **** Rename in Database =rename ID NAME=
 First performs a search similar to =info=; if the result is
@@ -231,7 +231,7 @@ disambiguations.
 
 It is an error to rename a non-existent item ID.
 
-- --database :: specify database to edit
+- =--database= :: specify database to edit
 
 **** Delete from Database =delete ID=
 First performs a search similar to =info=; if the result is unambiguous,
@@ -240,12 +240,12 @@ Otherwise, output a list (just as =info= would) of possible disambiguations.
 
 It is an error to delete a non-existent item ID.
 
-- --database :: specify database to edit
+- =--database= :: specify database to edit
 
 *** Recipe Alterations =recipe=
 Functions related to modifying recipes.
 
-- --database :: specify database to edit
+- =--database= :: specify database to edit
 
 **** Add Recipe to Database =add CT ID CT-1 ID-1 CT-2 ID-2 ..=
 First performs a search similar to =info=; if the result is
@@ -254,8 +254,8 @@ e.g. 4 Sticks needs 1 Wood) with the following ~CT~ -- ~ID~ pairs
 declaring the recipe requirements.  Otherwise, output a list (just as
 =info= would) of possible disambiguations.
 
-- --needs :: takes one argument, an item ID, that is required for this
-             crafting step
+- =--needs= :: takes one argument, an item ID, that is required for
+               this crafting step
 
 **** Delete Recipe from Database =delete=
 First performs a search similar to =info=; if the result is
