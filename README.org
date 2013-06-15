@@ -5,7 +5,7 @@ all-in-one command-line-interface (CLI) solution for understanding how
 much raw material you would invest for a particular item (and how to
 craft things as cheaply as possible).
 
-* Using McRaw
+* Using McRaw -- Tutorial
 ** Setting Up
 There is a fair amount of setup involved in McRaw.  Since there is no
 good way to extract item recipes from the Minecraft binaries
@@ -18,7 +18,7 @@ first exist.
 *** Installing
 Installing McRaw is a piece of cake.
 #+BEGIN_SRC sh
-  python mcraw.py install
+  python mcraw.py setup install
 #+END_SRC
 
 This does several things:
@@ -29,33 +29,33 @@ This does several things:
 McRaw uses a CLI interface to create and maintain databases of item
 recipes.  Creating a database called ~custom~ will work like this:
 #+BEGIN_SRC sh
-  mcraw setup createdb custom --file "/path/to/custom.mcrdb" 
+  mcraw setup createdb custom --file "/path/to/custom.mcraw" 
 #+END_SRC
 No spaces in database names.  With the =--file= option, you specify
 where you want the database to be saved.  If this is not provided,
-McRaw creates a file called ~custom.mcrdb~ in your HOME directory
+McRaw creates a file called ~custom.mcraw~ in your HOME directory
 (does this exist by default on Windows systems?  (Answer: no)) and is
 simply a saved state of an internal list of recipes.
 
 *** Adding Items
 You can add items to a database by
 #+BEGIN_SRC sh
-  mcraw additem ITEM_ID "NAME"
+  mcraw item add ITEM_ID "NAME"
 #+END_SRC
-which opens ~custom.mcrdb~, adds the item ~ITEM_ID~ to it with the
+which opens ~custom.mcraw~, adds the item ~ITEM_ID~ to it with the
 name ~NAME~, saves it, and exits.  It is an error to add an existing
 recipe.
 
 *** Renaming Items
 If you wish to rename an item,
 #+BEGIN_SRC sh
-  mcraw rename ITEM_ID "NEW NAME"
+  mcraw item rename ITEM_ID "NEW NAME"
 #+END_SRC
 which renames the item in the database file.
 
 *** Adding Recipes
 #+BEGIN_SRC sh
-  mcraw addrecipe NEWITEM_COUNT NEWITEM_ID ITEM1_COUNT ITEM1_ID ...
+  mcraw recipe add NEWITEM_COUNT NEWITEM_ID ITEM1_COUNT ITEM1_ID ...
 #+END_SRC
 Appends the given recipe for ~ITEM_ID~ to the database and saves it.
 
@@ -63,7 +63,7 @@ The optional argument =--needs= signals the start of needed, static
 utilities to complete the /immediate/ task; that is, the following
 recipe would be valid:
 #+BEGIN_SRC sh
-  mcraw addrecipe 8 CHARCOAL 8 WOOD 1 CHARCOAL --needs FURNACE
+  mcraw recipe add 8 CHARCOAL 8 WOOD 1 CHARCOAL --needs FURNACE
 #+END_SRC
 When this recipe is used in an item resolution, it will be noted that
 a ~FURNACE~ is needed.  Note that if additional recipes in the chain
@@ -85,7 +85,7 @@ with McRaw.  You can do this one of two ways:
      mcraw setup database custom
    #+END_SRC
    which simply performs the next option:
-2. Edit =$MCRAWDIR/.mcraw= to include the following lines:
+2. Edit =$MCRAWDIR/mcraw.conf= to include the following lines:
    #+BEGIN_SRC conf
      [mcraw]
      ...
@@ -160,10 +160,23 @@ double-check your checksums.
 #+BEGIN_SRC sh
   mcraw setup validate
 #+END_SRC
-* Boring Command Tree =mcraw=
-** Setup Tasks =setup=
+* Manual =mcraw=
+** Command Tree =mcraw=
+McRaw is organized into several subtasks.  If an invalid command is
+used at any time, a short usage summary will be printed to the
+standard output stream.
+
+*** Setup Tasks =setup=
 Performs uncommon menial setup tasks.
-*** Create Databases =createdb NAME=
+**** Install McRaw =install=
+- Ask for value for environment variable =MCRAWDIR=
+- Create directory =$MCRAWDIR=
+- Create file =$MCRAWDIR/mcraw.conf=
+- Move self into =$MCRAWDIR= and add to =PATH=.
+- If an Internet connection is available, offer to install databases
+  (from GitHub) into =$MCRAWDIR=
+
+**** Create Databases =createdb NAME=
 Takes one argument -- the name of a new database.  The database is
 added to the McRaw configuration file.
 
@@ -171,32 +184,32 @@ added to the McRaw configuration file.
             file.  If this file already exists, the file is not
             overwritten but first validated and then added to McRaw.
 
-*** Set Default Database =database NAME=
+**** Set Default Database =database NAME=
 Takes one argument and sets the default database.  This database must
 exist in McRaw's configuration file.
 
-*** Validate Installation =validate=
+**** Validate Installation =validate=
 Takes no arguments.  Automated installation validation.
 
-** Searching Databases =info ID=
+*** Searching Databases =info ID=
 Takes exactly one argument.  Quotes are not implied, but will group
 words into one argument.  If search result is unambiguous, =info= will
 output all the information available in the database.  Otherwise, a
 list of matching item names and IDs is output.
 
-** Reducing Items =reduce ID=
+*** Reducing Items =reduce ID=
 Reduces an item.  This is the main function of McRaw.  output all
 possible raw material and utility requirements.  First performs a
 search similar to =info=; if the result is unambiguous,
 
 Otherwise, output a list (just as =info= would) of possible disambiguations.
 
-** Item Alterations =item=
+*** Item Alterations =item=
 Functions related to modifying items.
 
 - --database :: specify database to edit
 
-*** Add to Database =add ID=
+**** Add to Database =add ID=
 First performs a search similar to =info=; if the result is
 unambiguous, adds the single argument as an item ID to the database.  
 Otherwise, output a list (just as =info= would) of possible
@@ -208,7 +221,7 @@ It is an error to re-add an existing item ID.
 - --name :: specifies a name for the item.  This is not the record
             key, so it need not be unique.
 
-*** Rename in Database =rename ID NAME=
+**** Rename in Database =rename ID NAME=
 First performs a search similar to =info=; if the result is
 unambiguous, rename the specified item ID with the name given.
 Otherwise, output a list (just as =info= would) of possible
@@ -218,7 +231,7 @@ It is an error to rename a non-existent item ID.
 
 - --database :: specify database to edit
 
-*** Delete from Database =delete ID=
+**** Delete from Database =delete ID=
 First performs a search similar to =info=; if the result is unambiguous,
 delete the specified item ID.
 Otherwise, output a list (just as =info= would) of possible disambiguations.
@@ -227,12 +240,12 @@ It is an error to delete a non-existent item ID.
 
 - --database :: specify database to edit
 
-** Recipe Alterations =recipe=
+*** Recipe Alterations =recipe=
 Functions related to modifying recipes.
 
 - --database :: specify database to edit
 
-*** Add Recipe to Database =add CT ID CT-1 ID-1 CT-2 ID-2 ..=
+**** Add Recipe to Database =add CT ID CT-1 ID-1 CT-2 ID-2 ..=
 First performs a search similar to =info=; if the result is
 unambiguous, add the recipe for ~ID~ (with mandatory count ~CT~;
 e.g. 4 Sticks needs 1 Wood) with the following ~CT~ -- ~ID~ pairs
@@ -242,12 +255,83 @@ declaring the recipe requirements.  Otherwise, output a list (just as
 - --needs :: takes one argument, an item ID, that is required for this
              crafting step
 
-*** Delete Recipe from Database =delete=
+**** Delete Recipe from Database =delete=
 First performs a search similar to =info=; if the result is
 unambiguous, output a list of recipes for the item ID.  Otherwise,
 output a list (just as =info= would) of possible disambiguations.
 
 Per the menu, this command cannot be run without interaction.
+
+*** Getting Help with =help=
+Taking exactly one argument, this command prints any documentation
+available for the command.
+
+** Persistent Data
+Of course, McRaw works with /real files/ and needs some place to store
+them.  Upon installation (see [[*Install%20McRaw%20%3Dinstall%3D][*Install McRaw]]), the configuration file,
+=mcraw.conf=, is added.  After installation, many individual databases
+might be created either within the McRaw directory or outside of it;
+all of this information is stored in the configuration file.
+
+*** Configuration File =$MCRAWDIR/mcraw.conf=
+Stores database file paths and references and database concatenations.
+An example file is below.
+
+#+BEGIN_SRC conf
+  [mcraw]
+  last_update=20130601
+  
+  [databases]
+  
+  mydbA=./dbA.mcraw
+  mydbB=../orphaned.mcraw
+  mydbC=simple.mcraw
+  
+  qualified=/Users/Teapot/grubby.mcraw
+  
+  [composites]
+  tekkit=galacticraft,someplugin
+  other=mydbA,mydbC
+  weird=tekkit,mydbB
+#+END_SRC
+**** Section =mcraw=
+Holds information directly related to McRaw as a program.
+
+- =lastupdate= :: The last date that McRaw checked for an update.  If
+                  this date is over two weeks ago and an Internet
+                  connection is available, McRaw will ask to update
+                  itself.  Whether or not the user accepts, this date
+                  is updated.
+**** Section =databases=
+holds keys to database files.  Every database must be registered in
+this configuration file before it can be used with McRaw.
+
+If database location is a relative path, it is checked relative to
+=$MCRAWDIR=.  Fully qualified names act as expected.
+
+- /=NAME=/ :: the file associated with the database that is referred
+              to by ~NAME~ from the McRaw interface.
+
+**** Section =composites=
+Most Minecraft plugins add items; we all now this.  I for one do not
+install just one plugin though, and will often remove plugins from the
+fray.  It's nice to be able to define 'composite' databases ---
+databases comprised of multiple other databases.
+
+Component databases must be declared before they can be used.  This is
+partly to avoid recursion.  While item IDs can be duplicated across
+multiple databases, note that McRaw will check the databases /in the
+order they are specified/.  Consider the composite:
+#+BEGIN_SRC conf
+  composite=component1,component2
+#+END_SRC
+If both ~component1~ and ~component2~ declare the item ID ~Spruce
+Wood~, ~component1~ definitions take precedence over ~component2~.  As
+such, it's not a good idea to have reduplicated item IDs, and it's
+best to simply use /the/ item ID used in Minecraft to avoid clashes.
+
+- /=NAME=/ :: a list of databases that comprise the composite database
+              that is referred to by ~NAME~ from the McRaw interface.
 
 * Credits
 ** Source
@@ -256,7 +340,7 @@ Per the menu, this command cannot be run without interaction.
 (Once the source code has matured, ready-to-use databases should be
 added here so that end users can, well, /use/ them without having to
 first set them up.  I'd like the yet-to-be-created folder =databases/=
-to contain a list of modpacks, presumeably ones that actually add
+to contain a list of modpacks, presumably ones that actually add
 items, further organized by version.  The software will provide a
 means of creating a union of modpacks
 
