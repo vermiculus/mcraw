@@ -1,5 +1,5 @@
 * About McRaw (mik-raw)
-[[https://travis-ci.org/vermiculus/mcraw.png?branch=master]]
+[[https://travis-ci.org/vermiculus/mcraw.png]]
 
 McRaw provides an extensible way to calculate the raw material
 requirements of any item you define.  McRaw is designed to be an
