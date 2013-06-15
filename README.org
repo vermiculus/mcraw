@@ -58,9 +58,9 @@ recipe would be valid:
   mcraw database custom addrecipe 8 CHARCOAL 8 WOOD 1 CHARCOAL --needs FURNACE
 #+END_SRC
 When this recipe is used in an item resolution, it will be noted that
-a =FURNACE= is needed.  Note that if additional recipes in the chain
-also need a furnace, the resolution will only note the need of a
-single =FURNACE=.
+a ~FURNACE~ is needed.  Note that if additional recipes in the chain
+also need a FURNACE, the resolution will only note the need of a
+single ~FURNACE~.
 
 Even though most recipes require a crafting table, this cannot be made
 a default as McRaw doesn't actually know anything about Minecraft.
@@ -72,10 +72,18 @@ Now comes the fun part.
 The following all assumes you've set your default database for use
 with McRaw.  You can do this one of two ways:
 
-1. Edit =~/.mcraw= to include the following line:
-   #+BEGIN_SRC conf
-     defaultdb=custom
+1. Tell McRaw you'd like to use a specific database by default.
+   #+BEGIN_SRC sh
+     mcraw set database custom
    #+END_SRC
+   which simply performs the next option:
+2. Edit =$MCRAWDIR/.mcraw= to include the following lines:
+   #+BEGIN_SRC conf
+     [mcraw]
+     ...
+     database=custom
+   #+END_SRC
+
 *** Getting Potential Costs
 Many times, especially with modpacks, there is more than one way to
 create an item.  This leads to an exponential growth in exactly how
@@ -92,13 +100,12 @@ produces such a list:
   There are multiple ways to craft this.  Here's a list:
   
   1: (6 items total)
-  4 Iron Ingot
-  2 Gold Ingot
+  4 Iron Ore
+  2 Gold Ore
   
-  2: (7 items total)
-  3 Iron Ingot
-  3 Gold Ingot
-  1 Dirt
+  2: 7 items total; needs Macerator (1234)
+  2 Iron Ore
+  1 Gold Ore
 #+END_EXAMPLE
 
 Since McRaw needs to be completely unambiguous and items in Minecraft
@@ -106,8 +113,13 @@ are often /very/ ambiguous, there is modest database search
 functionality embedded within McRaw.
 
 #+BEGIN_SRC sh
-  mcraw
+  mcraw database search wood
 #+END_SRC
+#+BEGIN_EXAMPLE
+  123:1 Spruce Wood
+  123:2 Oak Wood
+  123:3 Birch Wood
+#+END_EXAMPLE
 
 *** Getting Crafty
 Okay, so McRaw can give you a list of everything you need to lay your
@@ -130,8 +142,3 @@ means of creating a union of modpacks
   you only need to have two blocks of wood plank; /it doesn't matter
   what type of wood you use, so long as it's wood/.
 - Ability to define recipe shapes (and signal shapeless recipes)
-* Mcraw --file store name in config under heading databases
-[2013-06-13 Thu 12:22 a.m.]
-If file name not found ask for old filename and cp old to existing upon confirm
-
-Maybe java not everyone has python
