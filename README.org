@@ -5,15 +5,6 @@ all-in-one command-line-interface (CLI) solution for understanding how
 much raw material you would invest for a particular item (and how to
 craft things as cheaply as possible).
 
-McRaw does not and /w$ill not/ take into account the cost of smelting
-or other transforming BUT THIS COULD BE DONE IF
-
-Need to think about adding a 'needed items' to recipes
-#+BEGIN_SRC sh
-  mcraw database custom addrecipe 12345:1 241:3 4345:3 --need 123:1 1234:2
-#+END_SRC
-
-
 * Using McRaw
 ** Setting Up
 There is a fair amount of setup involved in McRaw.  Since there is no
@@ -56,9 +47,20 @@ which renames the item in the database file.
 
 *** Adding Recipes
 #+BEGIN_SRC sh
-  mcraw database custom addrecipe ITEM_ID ITEM1_ID ITEM1_COUNT ...
+  mcraw database custom addrecipe NEWITEM_COUNT NEWITEM_ID ITEM1_COUNT ITEM1_ID ...
 #+END_SRC
 Appends the given recipe for ~ITEM_ID~ to the database and saves it.
+
+The optional argument =--needs= signals the start of needed, static
+utilities to complete the /immediate/ task; that is, the following
+recipe would be valid:
+#+BEGIN_SRC sh
+  mcraw database custom addrecipe 8 CHARCOAL 8 WOOD 1 CHARCOAL --needs FURNACE
+#+END_SRC
+When this recipe is used in an item resolution, it will be noted that
+a =FURNACE= is needed.  Note that if additional recipes in the chain
+also need a furnace, the resolution will only note the need of a
+single =FURNACE=.
 
 ** Breaking Down
 Now comes the fun part.
@@ -106,6 +108,7 @@ functionality embedded within McRaw.
 *** Getting Crafty
 Okay, so McRaw can give you a list of everything you need to lay your
 hands on to craft your favorite item.
+
 * Credits
 ** Source
 - Sean Allred
