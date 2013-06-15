@@ -191,7 +191,12 @@ search similar to =info=; if the result is unambiguous,
 
 Otherwise, output a list (just as =info= would) of possible disambiguations.
 
-** Add Item to Database =additem ID=
+** Item Alterations =item=
+Functions related to modifying items.
+
+- --database :: specify database to edit
+
+*** Add to Database =add ID=
 First performs a search similar to =info=; if the result is
 unambiguous, adds the single argument as an item ID to the database.  
 Otherwise, output a list (just as =info= would) of possible
@@ -203,7 +208,7 @@ It is an error to re-add an existing item ID.
 - --name :: specifies a name for the item.  This is not the record
             key, so it need not be unique.
 
-** Rename Item in Database =renameitem ID NAME=
+*** Rename in Database =rename ID NAME=
 First performs a search similar to =info=; if the result is
 unambiguous, rename the specified item ID with the name given.
 Otherwise, output a list (just as =info= would) of possible
@@ -213,7 +218,7 @@ It is an error to rename a non-existent item ID.
 
 - --database :: specify database to edit
 
-** Delete Item from Database =delitem ID=
+*** Delete from Database =delete ID=
 First performs a search similar to =info=; if the result is unambiguous,
 delete the specified item ID.
 Otherwise, output a list (just as =info= would) of possible disambiguations.
@@ -222,25 +227,27 @@ It is an error to delete a non-existent item ID.
 
 - --database :: specify database to edit
 
-** Add Recipe to Database =addrecipe CT ID CT-1 ID-1 CT-2 ID-2 ..=
+** Recipe Alterations =recipe=
+Functions related to modifying recipes.
+
+- --database :: specify database to edit
+
+*** Add Recipe to Database =add CT ID CT-1 ID-1 CT-2 ID-2 ..=
 First performs a search similar to =info=; if the result is
 unambiguous, add the recipe for ~ID~ (with mandatory count ~CT~;
 e.g. 4 Sticks needs 1 Wood) with the following ~CT~ -- ~ID~ pairs
 declaring the recipe requirements.  Otherwise, output a list (just as
 =info= would) of possible disambiguations.
 
-- --database :: specify database to edit
 - --needs :: takes one argument, an item ID, that is required for this
              crafting step
 
-** Delete Recipe from Database =delrecipe=
+*** Delete Recipe from Database =delete=
 First performs a search similar to =info=; if the result is
 unambiguous, output a list of recipes for the item ID.  Otherwise,
 output a list (just as =info= would) of possible disambiguations.
 
 Per the menu, this command cannot be run without interaction.
-
-- --database :: specify database to edit
 
 * Credits
 ** Source
