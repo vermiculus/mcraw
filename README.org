@@ -62,6 +62,10 @@ a =FURNACE= is needed.  Note that if additional recipes in the chain
 also need a furnace, the resolution will only note the need of a
 single =FURNACE=.
 
+Even though most recipes require a crafting table, this cannot be made
+a default as McRaw doesn't actually know anything about Minecraft.
+So, most recipes will specify this option.
+
 ** Breaking Down
 Now comes the fun part.
 
