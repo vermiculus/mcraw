@@ -13,8 +13,9 @@ class McRawError(Exception):
 # My best idea ever!
 output_streams = {
     "status": True,
-    "debug": True,
-    "comment": False}
+    "debug": False,
+    "trace": True,
+    "warning": True}
 
 def message(stream, msg, *args):
     """
@@ -23,4 +24,5 @@ def message(stream, msg, *args):
     """
     if stream not in output_streams:
         raise McRawError("I can't find the '{}' stream.  Did you declare it in `output_streams`?".format(stream))
-    print("{}: {}".format(stream, msg.format(*args)))
+    if output_streams[stream]:
+        print("{}: {}".format(stream, msg.format(*args)))
