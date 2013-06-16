@@ -2,4 +2,4 @@ language: python
 python:
  - "2.7"
 install: python mcraw.py setup install
-script: mcraw setup validate
+script: python mcraw.py setup validate

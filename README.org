@@ -174,7 +174,8 @@ Performs uncommon menial setup tasks.
 - Ask for value for environment variable =MCRAWDIR=
 - Create directory =$MCRAWDIR=
 - Create file =$MCRAWDIR/mcraw.conf=
-- Move self into =$MCRAWDIR= and add to =PATH=.
+- Move self into =$MCRAWDIR=, remove extension, make self executable,
+  and add to =PATH=.
 - If an Internet connection is available, offer to install databases
   (from GitHub) into =$MCRAWDIR=
 
