@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- mode: python -*-
 
+print('McRaw version 0')
+
 for f in ['util', 'recipe', 'item', 'database']:
     execfile(f + '.py')
     message('debug', 'Imported {}', f)
@@ -123,9 +125,16 @@ def help2():
 # Process options
 
 if __name__ == '__main__':
-    message('debug', 'enter input')
-    my_args = raw_input('? ')
-    sys.argv = [sys.argv[0]] + my_args.split()
+    while True:
+        message('debug', 'enter input')
+        my_args = raw_input('? ')
+        if my_args == 'exit':
+            exit(0)
+        sys.argv = [sys.argv[0]] + my_args.split()
+        try:
+            locals()[sys.argv[1]]()
+        except:
+            argerr('help')
 
 try:
     locals()[sys.argv[1]]()
