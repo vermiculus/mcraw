@@ -169,7 +169,7 @@ used at any time, a short usage summary will be printed to the
 standard output stream.
 
 *** Setup Tasks =setup=
-Performs uncommon menial setup tasks.
+Performs relatively uncommon, menial setup tasks.
 **** Install McRaw =install=
 - Ask for value for environment variable =MCRAWDIR=
 - Create directory =$MCRAWDIR=

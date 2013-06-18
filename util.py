@@ -13,9 +13,10 @@ class McRawError(Exception):
 # My best idea ever!
 output_streams = {
     "status": True,
-    "debug": False,
+    "debug": True,
     "trace": True,
-    "warning": True}
+    "warning": True,
+    "error": True}
 
 def message(stream, msg, *args):
     """
