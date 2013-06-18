@@ -5,7 +5,6 @@ for f in ['util', 'recipe', 'item', 'database']:
     execfile(f + '.py')
     message('debug', 'Imported {}', f)
 
-<<<<<<< HEAD
 import sys, os
 
 mcrawdir = r'C:\Users\Sean\AppData\Roaming\.minecraft\mcraw'
@@ -15,12 +14,15 @@ mcrawdir = r'C:\Users\Sean\AppData\Roaming\.minecraft\mcraw'
 # operations throughout the rest of the program.  If the user really
 # needs to specify absolute filenames (which isn't likely, as I far as
 # I can see), they can specify absolute filepaths.
-
 os.chdir(mcrawdir)
 
 def mcr(s = 'mcraw.cfg'):
     message('trace', 'in path generator')
     return '{}/{}'.format(mcrawdir, s)
+
+def argerr(cmd):
+    message('error', 'Argument error.  ' +
+            'Please see `{} {}` for usage information.', sys.argv[0], cmd)
 
 def __configure(section, option, value):
     message('trace', 'in configuration')
@@ -34,13 +36,7 @@ def __configure(section, option, value):
         parser.set(section, option, value)
         parser.write(configuration)
 
-# Process options
-=======
-argerr = lambda cmd: message('error', 'Argument error.  \
-Please see `{} {}` for usage information.'.format(sys.argv[0], cmd))
-
 # Declare options
->>>>>>> c669d707e2c6b73c74c808f42f79a407df64fccf
 def setup():
     """Perform relatively uncommon, menial setup tasks."""
     message('trace', 'in setup')
@@ -53,7 +49,7 @@ def setup():
         os.environ['PATH'] += os.pathsep + mcrawdir
         
         # mcd: if the user gave the separator, don't add another to the arg
-        mcd = lambda s: mcrawdir+s if mcrawdir[-1] is os.sep else mcrawdir+os.sep+s
+        mcd = lambda s: mcrawdir+s if mcrawdir[-1] is os.sep else mcrawdir + os.sep + s
         import shutil
         shutil.copyfile(sys.argv[0], mcd('mcraw'))
 
@@ -125,29 +121,13 @@ def help2():
 
 
 # Process options
-import sys
-<<<<<<< HEAD
-
 
 if __name__ == '__main__':
     message('debug', 'enter input')
     my_args = raw_input('? ')
     sys.argv = [sys.argv[0]] + my_args.split()
 
-
-if len(sys.argv) > 1:
-    try:
-        locals()[sys.argv[1]]()
-    except KeyError:
-        message('status', 'Command not supported.')
-else:
-    message('status', 'No arguments given.')
-
-=======
 try:
     locals()[sys.argv[1]]()
 except:
     argerr('help')
-
-
->>>>>>> c669d707e2c6b73c74c808f42f79a407df64fccf
