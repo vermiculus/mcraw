@@ -17,6 +17,8 @@ output_streams = {
     "trace": True,
     "warning": True}
 
+import textwrap
+
 def message(stream, msg, *args):
     """
     If stream is defined and enabled in output_streams, then print to
@@ -25,4 +27,6 @@ def message(stream, msg, *args):
     if stream not in output_streams:
         raise McRawError("I can't find the '{}' stream.  Did you declare it in `output_streams`?".format(stream))
     if output_streams[stream]:
-        print("{}: {}".format(stream, msg.format(*args)))
+        msgs = textwrap.wrap(msg.format(*args), 70 - (len(stream) + 2))
+        for m in msgs:
+            print("{}: {}".format(stream, m))
